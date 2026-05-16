@@ -613,5 +613,3 @@ function init() {
 }
 
 init();
-</script>
-
