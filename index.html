@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>齿轮的奥秘 — 数学探究实验室</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <h1>⚙️ 齿轮的奥秘</h1>
+    <div class="subtitle">沪教版数学·六年级下册 — 探究齿轮中的数学规律</div>
+  </header>
+
+  <!-- 选项卡 -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('explore')">🔍 探究实验</button>
+    <button class="tab-btn" onclick="switchTab('record')">📊 数据记录</button>
+    <button class="tab-btn" onclick="switchTab('game')">🎮 闯关挑战</button>
+  </div>
+
+  <!-- ==================== 探究实验面板 ==================== -->
+  <div class="panel active" id="panel-explore">
+    <div class="canvas-area">
+      <canvas id="gearCanvas" width="900" height="520"></canvas>
+    </div>
+
+    <!-- 实时数据 -->
+    <div class="data-row">
+      <div class="data-item">
+        <div class="label">大齿轮转动</div>
+        <div class="value" id="bigRotations">1.00</div>
+        <div class="unit">圈</div>
+      </div>
+      <div class="data-item">
+        <div class="label">小齿轮转动</div>
+        <div class="value" id="smallRotations">2.00</div>
+        <div class="unit">圈</div>
+      </div>
+      <div class="data-item">
+        <div class="label">大齿轮齿数 × 圈数</div>
+        <div class="value" id="productBig">24.00</div>
+      </div>
+      <div class="data-item">
+        <div class="label">小齿轮齿数 × 圈数</div>
+        <div class="value" id="productSmall">24.00</div>
+      </div>
+    </div>
+
+    <!-- 控制 -->
+    <div class="controls">
+      <div class="control-card" style="border-left: 3px solid #f7971e;">
+        <h3>🔶 大齿轮（主动轮）</h3>
+        <div class="control-row">
+          <label>齿数</label>
+          <input type="range" min="8" max="48" value="24" id="bigTeethSlider" oninput="updateFromSlider('big')">
+          <input type="number" min="8" max="48" value="24" id="bigTeethInput" oninput="updateFromInput('big')">
+          <span class="val">个</span>
+        </div>
+        <div class="control-row">
+          <label>转动圈数</label>
+          <input type="range" min="1" max="10" value="1" step="0.1" id="bigRotSlider" oninput="updateFromSlider('big')">
+          <input type="number" min="0.1" max="10" value="1" step="0.1" id="bigRotInput" oninput="updateFromInput('big')">
+          <span class="val">圈</span>
+        </div>
+      </div>
+      <div class="control-card" style="border-left: 3px solid #4fc3f7;">
+        <h3>🔵 小齿轮（从动轮）</h3>
+        <div class="control-row">
+          <label>齿数</label>
+          <input type="range" min="8" max="48" value="12" id="smallTeethSlider" oninput="updateFromSlider('small')">
+          <input type="number" min="8" max="48" value="12" id="smallTeethInput" oninput="updateFromInput('small')">
+          <span class="val">个</span>
+        </div>
+        <div class="control-row">
+          <label style="color:#666;">转动圈数</label>
+          <span id="smallRotDisplay" style="color:#4fc3f7;font-weight:bold;">2.00 圈</span>
+          <span style="font-size:11px;color:#666;">（自动计算）</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box" id="relationHint">
+      <strong>💡 你发现了什么？</strong><br>
+      调整上方滑块，观察大齿轮和小齿轮的<span class="highlight">齿数</span>与<span class="highlight">转动圈数</span>之间的关系。
+      <br>试试看：保持齿数不变，增大转动圈数，看看两个齿轮转过的<span class="highlight">总齿数</span>是否相等？
+      <br>再试试：调整大齿轮齿数为<span class="highlight">12</span>，小齿轮为<span class="highlight">24</span>，观察规律是否仍然成立。
+    </div>
+  </div>
+
+  <!-- ==================== 数据记录面板 ==================== -->
+  <div class="panel" id="panel-record">
+    <div style="text-align:center;margin:15px 0;">
+      <button class="btn btn-primary" onclick="addRecord()">📝 记录当前数据</button>
+      <button class="btn btn-outline" onclick="clearRecords()" style="margin-left:10px;">🗑️ 清空记录</button>
+    </div>
+
+    <table class="record-table" id="recordTable">
+      <thead>
+        <tr>
+          <th>序号</th>
+          <th>大齿轮齿数 Z₁</th>
+          <th>小齿轮齿数 Z₂</th>
+          <th>大齿轮圈数 R₁</th>
+          <th>小齿轮圈数 R₂</th>
+          <th>Z₁ × R₁</th>
+          <th>Z₂ × R₂</th>
+          <th>Z₁ : Z₂</th>
+          <th>R₂ : R₁</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="9" style="color:#666;padding:30px;">还未记录数据，请先在"探究实验"中调整齿轮参数，然后点击"记录当前数据"</td></tr>
+      </tbody>
+    </table>
+
+    <div class="info-box">
+      <strong>📐 探究任务：</strong><br>
+      1. 至少记录 <span class="highlight">5组</span> 不同参数的数据<br>
+      2. 观察 <span class="highlight">Z₁ × R₁</span> 和 <span class="highlight">Z₂ × R₂</span> 两列，你发现了什么？<br>
+      3. 观察 <span class="highlight">Z₁ : Z₂</span> 和 <span class="highlight">R₂ : R₁</span> 两列，它们之间有什么关系？<br>
+      4. 你能总结出齿轮的<span class="highlight">数学规律</span>吗？
+    </div>
+
+    <div style="margin:15px 0;padding:16px;background:rgba(76,175,80,0.08);border-radius:12px;border:1px solid rgba(76,175,80,0.2);">
+      <strong style="color:#81c784;">📖 知识点（完成探究后查看）：</strong>
+      <div style="margin-top:10px;line-height:1.9;font-size:14px;display:none;" id="knowledgeReveal">
+        对于相互啮合的两个齿轮：<br>
+        🔹 <span class="highlight">齿数与圈数成反比例</span> — 齿数越多，转动圈数越少；齿数越少，转动圈数越多。<br>
+        🔹 <span class="highlight">Z₁ · R₁ = Z₂ · R₂</span> — 两个齿轮转过的总齿数始终相等。<br>
+        🔹 <span class="highlight">Z₁ : Z₂ = R₂ : R₁</span> — 齿数比等于圈数的反比。<br>
+        🔹 两个啮合齿轮的<span class="highlight">转动方向相反</span>。<br>
+        🔹 应用：自行车变速器、钟表、机械传动等都运用了齿轮规律。
+      </div>
+      <button class="btn btn-sm btn-outline" onclick="revealKnowledge()" style="margin-top:10px;" id="revealBtn">🔓 点击查看规律</button>
+    </div>
+  </div>
+
+  <!-- ==================== 闯关挑战面板 ==================== -->
+  <div class="panel" id="panel-game">
+    <div class="game-score">
+      🏆 得分：<span id="gameScore" style="color:#ffd200;font-size:28px;">0</span> / <span id="gameTotal">0</span>
+    </div>
+
+    <div class="game-question" id="gameContainer">
+      <div class="q-text" id="gameQuestion">点击"开始挑战"来答题</div>
+      <div class="game-options" id="gameOptions"></div>
+      <div class="game-feedback" id="gameFeedback"></div>
+    </div>
+
+    <div style="text-align:center;margin:15px 0;">
+      <button class="btn btn-primary" id="startGameBtn" onclick="startGame()">🎯 开始挑战</button>
+      <button class="btn btn-outline" id="nextGameBtn" onclick="nextQuestion()" style="display:none;margin-left:10px;">▶️ 下一题</button>
+    </div>
+
+    <div class="info-box">
+      <strong>🎮 游戏说明：</strong><br>
+      运用你在实验中发现的齿轮规律来回答问题。<br>
+      答对一题得 <span class="highlight">10分</span>，看看你能拿多少分！
+    </div>
+  </div>
+
+</div>
+
+  <script src="js/script.js"></script>
+
+</body>
+</html>
